@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKRIN UTAMA - Pemarkahan Silat</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body class="bg-gray-950 text-white font-sans p-6 flex flex-col justify-between h-screen">
+
+    <div class="text-center">
+        <h1 id="info-kelas" class="text-3xl font-bold text-yellow-400 tracking-wider">KELAS - LOADING</h1>
+        <p class="text-gray-400 text-sm mt-1">SISTEM SKRIN UTAMA</p>
+    </div>
+    
+    <div class="grid grid-cols-2 gap-8 my-auto">
+        <div class="bg-red-800 border-4 border-red-600 p-8 rounded-2xl shadow-2xl text-center">
+            <h2 id="nama-merah" class="text-5xl font-black tracking-wide">Nama Pesilat</h2>
+            <p id="club-merah" class="text-xl opacity-70 mt-2">Pertubuhan</p>
+            <div id="mata-merah" class="text-[12rem] font-black my-4 leading-none text-white drop-shadow-md">0</div>
+            <div class="grid grid-cols-3 gap-2 text-center text-sm bg-red-950/60 p-4 rounded-xl mt-4">
+                <div><p class="opacity-70">Binaan</p><p id="binaan-merah" class="text-2xl font-bold text-amber-400">0/2</p></div>
+                <div><p class="opacity-70">Amaran</p><p id="amaran-merah" class="text-2xl font-bold text-amber-500">0</p></div>
+                <div><p class="opacity-70">K. Berat</p><p id="berat-merah" class="text-2xl font-bold text-red-400">0</p></div>
+            </div>
+        </div>
+
+        <div class="bg-blue-800 border-4 border-blue-600 p-8 rounded-2xl shadow-2xl text-center">
+            <h2 id="nama-biru" class="text-5xl font-black tracking-wide">Nama Pesilat</h2>
+            <p id="club-biru" class="text-xl opacity-70 mt-2">Pertubuhan</p>
+            <div id="mata-biru" class="text-[12rem] font-black my-4 leading-none text-white drop-shadow-md">0</div>
+            <div class="grid grid-cols-3 gap-2 text-center text-sm bg-blue-950/60 p-4 rounded-xl mt-4">
+                <div><p class="opacity-70">Binaan</p><p id="binaan-biru" class="text-2xl font-bold text-amber-400">0/2</p></div>
+                <div><p class="opacity-70">Amaran</p><p id="amaran-biru" class="text-2xl font-bold text-amber-500">0</p></div>
+                <div><p class="opacity-70">K. Berat</p><p id="berat-biru" class="text-2xl font-bold text-red-400">0</p></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center text-xs text-gray-600">Sistem Pemarkahan Silat Elektronik Offline v1.0</div>
+
+    <script>
+        const socket = io();
+        socket.on('kemaskini_skrin', (data) => {
+            document.getElementById('info-kelas').innerText = data.kelas;
+            document.getElementById('nama-merah').innerText = data.merah.nama;
+            document.getElementById('club-merah').innerText = data.merah.pertubuhan;
+            document.getElementById('mata-merah').innerText = data.merah.mata;
+            document.getElementById('binaan-merah').innerText = data.merah.binaan + "/2";
+            document.getElementById('amaran-merah').innerText = data.merah.amaran;
+            document.getElementById('berat-merah').innerText = data.merah.berat;
+
+            document.getElementById('nama-biru').innerText = data.biru.nama;
+            document.getElementById('club-biru').innerText = data.biru.pertubuhan;
+            document.getElementById('mata-biru').innerText = data.biru.mata;
+            document.getElementById('binaan-biru').innerText = data.biru.binaan + "/2";
+            document.getElementById('amaran-biru').innerText = data.biru.amaran;
+            document.getElementById('berat-biru').innerText = data.biru.berat;
+        });
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PANEL JURI - Silat</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans p-4 select-none">
+
+    <div class="flex justify-between items-center bg-gray-800 p-3 rounded-lg mb-4">
+        <span class="font-bold text-green-400">INPUT JURI</span>
+        <select id="pilih-juri" class="bg-gray-700 text-white px-3 py-1 rounded font-bold border border-gray-600">
+            <option value="1">JURI 1</option>
+            <option value="2">JURI 2</option>
+            <option value="3">JURI 3</option>
+        </select>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 h-[75vh]">
+        <div class="space-y-3 flex flex-col justify-between">
+            <button onclick="hantarMata('merah', 'tumbukan')" class="w-full flex-1 bg-red-600 active:bg-red-700 text-2xl font-black rounded-xl shadow-lg border-b-4 border-red-800">TUMBUK (+1)</button>
+            <button onclick="hantarMata('merah', 'sepakan')" class="w-full flex-1 bg-red-600 active:bg-red-700 text-2xl font-black rounded-xl shadow-lg border-b-4 border-red-800">SEPAK (+2)</button>
+            <button onclick="hantarMata('merah', 'jatuhan')" class="w-full flex-1 bg-red-600 active:bg-red-700 text-2xl font-black rounded-xl shadow-lg border-b-4 border-red-800">JATUHAN (+3)</button>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="hantarKesalahan('merah', 'binaan')" class="bg-amber-600 active:bg-amber-700 py-3 font-bold text-sm rounded-lg">BINAAN</button>
+                <button onclick="hantarKesalahan('merah', 'amaran')" class="bg-amber-700 active:bg-amber-800 py-3 font-bold text-sm rounded-lg">AMARAN (-1)</button>
+            </div>
+            <button onclick="hantarKesalahan('merah', 'berat')" class="w-full bg-red-950 active:bg-black py-3 font-bold text-xs rounded-lg border border-red-500">KESALAHAN BERAT (-5)</button>
+        </div>
+
+        <div class="space-y-3 flex flex-col justify-between">
+            <button onclick="hantarMata('biru', 'tumbukan')" class="w-full flex-1 bg-blue-600 active:bg-blue-700 text-2xl font-black rounded-xl shadow-lg border-b-4 border-blue-800">TUMBUK (+1)</button>
+            <button onclick="hantarMata('biru', 'sepakan')" class="w-full flex-1 bg-blue-600 active:bg-blue-700 text-2xl font-black rounded-xl shadow-lg border-b-4 border-blue-800">SEPAK (+2)</button>
+            <button onclick="hantarMata('biru', 'jatuhan')" class="w-full flex-1 bg-blue-600 active:bg-blue-700 text-2xl font-black rounded-xl shadow-lg border-b-4 border-blue-800">JATUHAN (+3)</button>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="hantarKesalahan('biru', 'binaan')" class="bg-amber-600 active:bg-amber-700 py-3 font-bold text-sm rounded-lg">BINAAN</button>
+                <button onclick="hantarKesalahan('biru', 'amaran')" class="bg-amber-700 active:bg-amber-800 py-3 font-bold text-sm rounded-lg">AMARAN (-1)</button>
+            </div>
+            <button onclick="hantarKesalahan('biru', 'berat')" class="w-full bg-blue-950 active:bg-black py-3 font-bold text-xs rounded-lg border border-blue-500">KESALAHAN BERAT (-5)</button>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+        function hantarMata(sudut, jenis) {
+            const noJuri = document.getElementById('pilih-juri').value;
+            socket.emit('tambah_mata', { juri: noJuri, sudut, jenis });
+        }
+        function hantarKesalahan(sudut, jenis) {
+            const noJuri = document.getElementById('pilih-juri').value;
+            socket.emit('tambah_kesalahan', { juri: noJuri, sudut, jenis });
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAPARAN KETUA JURI (EDITABLE)</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body class="bg-slate-900 text-white font-sans p-6">
+
+    <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl mb-6 shadow">
+        <div>
+            <h1 class="text-2xl font-bold text-emerald-400">SKRIN KETUA PERTANDINGAN (KP)</h1>
+            <p class="text-xs text-gray-400">Kuasa penuh edit maklumat perlawanan & pantau Juri</p>
+        </div>
+        <button onclick="resetMata()" class="bg-red-600 hover:bg-red-700 px-4 py-2 font-bold text-sm rounded-lg shadow">RESET MARKAH</button>
+    </div>
+
+    <div class="bg-slate-800 p-4 rounded-xl mb-6 border border-slate-700">
+        <h2 class="text-md font-bold mb-3 text-emerald-400">📝 EDIT MAKLUMAT PERLAWANAN SEMASA</h2>
+        <div class="grid grid-cols-5 gap-3 items-end">
+            <div>
+                <label class="block text-xs text-gray-400 mb-1">Kelas Perlawanan</label>
+                <input type="text" id="input-kelas" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-1.5 text-sm">
+            </div>
+            <div class="bg-red-950/30 p-2 rounded border border-red-900/50">
+                <label class="block text-xs text-red-400 mb-1">Nama Pesilat Merah</label>
+                <input type="text" id="input-nama-merah" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-sm">
+                <label class="block text-[10px] text-gray-400 mt-1 mb-0.5">Pertubuhan Merah</label>
+                <input type="text" id="input-club-merah" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs">
+            </div>
+            <div class="bg-blue-950/30 p-2 rounded border border-blue-900/50">
+                <label class="block text-xs text-blue-400 mb-1">Nama Pesilat Biru</label>
+                <input type="text" id="input-nama-biru" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-sm">
+                <label class="block text-[10px] text-gray-400 mt-1 mb-0.5">Pertubuhan Biru</label>
+                <input type="text" id="input-club-biru" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs">
+            </div>
+            <button onclick="simpanMaklumat()" class="col-span-2 w-full bg-emerald-600 hover:bg-emerald-500 py-4 font-bold text-md rounded-lg shadow-lg">💾 KEMASKINI & POP-UP KE SEMUA TABLET</button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-6">
+        <div class="col-span-2 bg-slate-800 p-4 rounded-xl shadow-lg border border-slate-700">
+            <h2 class="text-md font-bold mb-3 text-yellow-400 tracking-wider">📡 LOG TEKANAN JURI (LIVE REKOD)</h2>
+            <div id="log-container" class="space-y-2 max-h-[45vh] overflow-y-auto pr-2">
+                <div class="text-gray-500 text-sm text-center py-8">Menunggu pergerakan daripada juri...</div>
+            </div>
+        </div>
+
+        <div class="bg-slate-800 p-4 rounded-xl shadow-lg border border-slate-700 flex flex-col justify-between">
+            <div>
+                <h2 class="text-md font-bold mb-4 text-center text-gray-300">RINGKASAN SKRIN UTAMA</h2>
+                <div class="space-y-4">
+                    <div class="bg-red-950/40 p-3 rounded-lg border-l-4 border-red-600">
+                        <p id="kp-nama-merah" class="font-bold text-sm text-red-400">Pesilat Merah</p>
+                        <p class="text-3xl font-black mt-1" id="kp-mata-merah">0 Mata</p>
+                    </div>
+                    <div class="bg-blue-950/40 p-3 rounded-lg border-l-4 border-blue-600">
+                        <p id="kp-nama-biru" class="font-bold text-sm text-blue-400">Pesilat Biru</p>
+                        <p class="text-3xl font-black mt-1" id="kp-mata-biru">0 Mata</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+
+        // Apabila terima data dari server, masukkan juga dalam kotak Input Borang
+        socket.on('kemaskini_skrin', (data) => {
+            // Kemaskini teks paparan ringkasan
+            document.getElementById('kp-nama-merah').innerText = data.merah.nama + " (" + data.merah.pertubuhan + ")";
+            document.getElementById('kp-mata-merah').innerText = data.merah.mata + " Mata";
+            document.getElementById('kp-nama-biru').innerText = data.biru.nama + " (" + data.biru.pertubuhan + ")";
+            document.getElementById('kp-mata-biru').innerText = data.biru.mata + " Mata";
+
+            // Masukkan data ke dalam kotak input (Hanya jika belum ditaip baru)
+            if (document.activeElement.tagName !== 'INPUT') {
+                document.getElementById('input-kelas').value = data.kelas;
+                document.getElementById('input-nama-merah').value = data.merah.nama;
+                document.getElementById('input-club-merah').value = data.merah.pertubuhan;
+                document.getElementById('input-nama-biru').value = data.biru.nama;
+                document.getElementById('input-club-biru').value = data.biru.pertubuhan;
+            }
+        });
+
+        // Hantar maklumat baru ke server apabila butang hijau ditekan
+        function simpanMaklumat() {
+            const dataBaru = {
+                kelas: document.getElementById('input-kelas').value,
+                namaMerah: document.getElementById('input-nama-merah').value,
+                clubMerah: document.getElementById('input-club-merah').value,
+                namaBiru: document.getElementById('input-nama-biru').value,
+                clubBiru: document.getElementById('input-club-biru').value
+            };
+            socket.emit('kemaskini_maklumat', dataBaru);
+            alert("Maklumat berjaya dikemas kini ke semua skrin!");
+        }
+
+        socket.on('kemaskini_log_ketua', (logs) => {
+            const container = document.getElementById('log-container');
+            if (logs.length === 0) {
+                container.innerHTML = `<div class="text-gray-500 text-sm text-center py-8">Menunggu pergerakan daripada juri...</div>`;
+                return;
+            }
+            container.innerHTML = logs.map(log => {
+                let warnaJuri = "bg-purple-900 text-purple-200";
+                if(log.juri === "Juri 1") warnaJuri = "bg-teal-800 text-teal-100";
+                if(log.juri === "Juri 2") warnaJuri = "bg-fuchsia-800 text-fuchsia-100";
+
+                return `
+                    <div class="flex items-center justify-between p-3 bg-slate-900 rounded-lg border border-slate-700/50">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-xs px-2 py-1 font-bold rounded ${warnaJuri}">${log.juri}</span>
+                            <span class="text-sm font-medium text-gray-200">${log.tindakan}</span>
+                        </div>
+                        <span class="text-xs text-gray-500 font-mono">${log.masa}</span>
+                    </div>
+                `;
+            }).join('');
+        });
+
+        function resetMata() {
+            if(confirm("Ketua Juri sahkan untuk RESET perlawanan ini?")) {
+                socket.emit('reset_perlawanan');
+            }
+        }
+    </script>
+</body>
+</html>
